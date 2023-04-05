@@ -111,15 +111,15 @@ for i in range(n_iterations):
     paths, costs = aco.release_ants(start=0, end=n_ants-1)
     pheromone = aco.update_pheromones(paths, costs)
 
-    # Convert paths to binary masks for feature selection
-    masks = np.zeros((n_ants, n_inputs))
+    # Convert paths to binary arrays for feature selection
+    bin_array = np.zeros((n_ants, n_inputs))
     for i, path in enumerate(paths):
-        masks[i, path] = 1
+        bin_array[i, path] = 1
 
     # Train the model with the selected features
-    for mask in masks:
+    for mask in bin_array:
         # Split data into train and validation sets
-        X_train_sel, X_val_sel, y_train_sel, y_val_sel = train_test_split(X_train * mask, y_train, test_size=0.2, random_state=42)
+        X_train_sel, X_val_sel, y_train_sel, y_val_sel = train_test_split(X_train * bin_array, y_train, test_size=0.2, random_state=42)
 
         # One-hot encode the targets
         y_train_sel = to_categorical(y_train_sel)
@@ -129,9 +129,9 @@ for i in range(n_iterations):
         history = model.fit(X_train_sel, y_train_sel, epochs=50, batch_size=32, verbose=0, validation_data=(X_val_sel, y_val_sel))
 
         # Evaluate the model
-        score = model.evaluate(X_test * mask, to_categorical(y_test), verbose=0)
+        score = model.evaluate(X_test * bin_array, to_categorical(y_test), verbose=0)
 
         # Print the results
-        print('Features:', np.where(mask == 1)[0])
+        print('Features:', np.where(bin_array == 1)[0])
         print('Accuracy:', score[1])
         print('Loss:', score[0])
