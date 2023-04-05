@@ -5,7 +5,7 @@ from sklearn.preprocessing import StandardScaler
 import tensorflow as tf
 from sklearn.metrics import confusion_matrix, classification_report
 
-# Define the GeneticAlgorithm class
+# GeneticAlgorithm class definition
 class GeneticAlgorithm:
     def __init__(self, population_size, mutation_rate, num_generations):
         self.population_size = population_size
@@ -13,24 +13,24 @@ class GeneticAlgorithm:
         self.num_generations = num_generations
         
     def run(self, fitness_fn, gene_pool):
-        # Initialize the population
+        # Initialising the initial population
         population = self.initialize_population(gene_pool)
         
-        # Iterate through the generations
+        # Iterate generations
         for i in range(self.num_generations):
             # Evaluate the fitness of the population
             fitness_scores = [fitness_fn(individual) for individual in population]
             
-            # Select the parents for the next generation
+            # Select the parents for the next generation (use fitness score to chose)
             parents = self.select_parents(population, fitness_scores)
             
-            # Create the next generation
+            # Next generation
             next_generation = self.create_next_generation(parents, gene_pool)
             
-            # Mutate the next generation
+            # Mutation
             mutated_generation = self.mutate_population(next_generation, gene_pool)
             
-            # Update the population
+            # Update
             population = mutated_generation
         
         # Return the best individual from the final generation
@@ -153,4 +153,6 @@ cm = confusion_matrix(y_test, y_pred_class)
 cr = classification_report(y_test, y_pred_class)
 print('Confusion Matrix:\n', cm)
 print('Classification Report:\n', cr)
+
+
 
